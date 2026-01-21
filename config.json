@@ -5,3 +5,236 @@
 }
 
 
+
+import 'package:flutter/material.dart';
+import 'login_page.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Responsive Login',
+      home: const LoginPage(),
+    );
+  }
+}
+
+
+import 'package:flutter/material.dart';
+import 'landing_page.dart';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  void login() {
+    if (_formKey.currentState!.validate()) {
+      if (emailController.text == "testing@gmail.com" &&
+          passwordController.text == "123456") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LandingPage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Invalid credentials")),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          bool isDesktop = constraints.maxWidth >= 900;
+
+          return isDesktop
+              ? Row(
+                  children: [
+                    Expanded(child: imageSection()),
+                    Expanded(child: formSection()),
+                  ],
+                )
+              : Column(
+                  children: [
+                    Expanded(child: imageSection()),
+                    Expanded(child: formSection()),
+                  ],
+                );
+        },
+      ),
+    );
+  }
+
+  Widget imageSection() {
+    return Container(
+      color: Colors.blueGrey.shade100,
+      child: Center(
+        child: Icon(
+          Icons.lock_outline,
+          size: 120,
+          color: Colors.blueGrey.shade700,
+        ),
+      ),
+    );
+  }
+
+  Widget formSection() {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Login",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 24),
+
+                /// Email
+                TextFormField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: "Email",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Email is required";
+                    }
+                    if (!value.contains("@")) {
+                      return "Enter valid email";
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                /// Password
+                TextFormField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: "Password",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Password is required";
+                    }
+                    if (value.length < 6) {
+                      return "Minimum 6 characters required";
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                /// Login Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: login,
+                    child: const Text("Login"),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+                }
+
+
+
+
+import 'package:flutter/material.dart';
+
+class LandingPage extends StatelessWidget {
+  const LandingPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          bool isDesktop = constraints.maxWidth >= 900;
+
+          return isDesktop
+              ? Row(
+                  children: [
+                    Expanded(child: contentSection()),
+                    Expanded(child: imageSection()),
+                  ],
+                )
+              : Column(
+                  children: [
+                    Expanded(child: imageSection()),
+                    Expanded(child: contentSection()),
+                  ],
+                );
+        },
+      ),
+    );
+  }
+
+  Widget imageSection() {
+    return Container(
+      color: Colors.orange.shade100,
+      child: Center(
+        child: Icon(
+          Icons.dashboard,
+          size: 120,
+          color: Colors.orange.shade700,
+        ),
+      ),
+    );
+  }
+
+  Widget contentSection() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Text(
+              "Welcome to Landing Page",
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            Text(
+              "This layout is responsive for mobile, tablet, and desktop screens.",
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
